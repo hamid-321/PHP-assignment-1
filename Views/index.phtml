@@ -1,0 +1,236 @@
+<?php
+
+Namespace Views;
+//starts a session to allow access to session tokens which have information stored in them
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+require('Templates/header.phtml');
+
+?>
+<div class="allcontent">
+<h2>Welcome to ParcelPal</h2>
+<!--if a user isnt logged in-->
+    <?php if(!isset($userData)) :?>
+    <form action="loginController.php" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button class="green-button" type="submit">Login</button>
+    </form>
+    <?php endif?>
+<!--    if an error occurs while logging in-->
+    <?php if (isset($view->loginError)): ?>
+        <p class="error"><?= htmlspecialchars($view->loginError); ?></p>
+    <?php endif; ?>
+
+<?php if (isset($userData)): ?>
+<!--if user is logged in next content displays-->
+    <p>Hi, <?php echo htmlspecialchars($userData['user_name']); ?>! You can view all and manage the deliveries below.</p>
+<!--From here to the next comment are conditional messages depending on if a certain task has been carried out, e.g. edit delivery, each message comes with a close button to unset the message-->
+    <?php if (isset($_SESSION['deleteMessage'])) {
+    echo "<p class='success'>{$_SESSION['deleteMessage']}</p>";}?>
+    <?php if (isset($_SESSION['deleteMessage'])): ?>
+    <form action="deleteController.php" method="post">
+        <button class="green-button biggerbutton bottompad" type="submit" name="closeDeleteMessage" value="1">Close Message</button>
+    </form>
+    <?php if (isset($_SESSION['createSuccessMessage'])) {
+        echo "<p class='success'>{$_SESSION['createSuccessMessage']}</p>";}?>
+    <?php endif ?>
+    <?php if (isset($_SESSION['createSuccessMessage'])):
+        echo "<p class='success'>{$_SESSION['createSuccessMessage']}</p>";?>
+        <form action="createDeliveryController.php" method="post">
+            <button class="green-button biggerbutton bottompad" type="submit" name="closeCreateMessage" value="1">Close Message</button>
+        </form>
+    <?php endif ?>
+    <?php if (isset($_SESSION['editSuccessMessage'])):
+        echo "<p class='success'>{$_SESSION['editSuccessMessage']}</p>";?>
+        <form action="editController.php" method="post">
+            <button class="green-button biggerbutton bottompad" type="submit" name="closeEditMessage" value="1">Close Message</button>
+        </form>
+    <?php endif?>
+<!--end of conditional messages-->
+    <?php if ($view->userTypeName === 'Manager') : ?>
+<!--    if the user is a manager-->
+    <form action="createDeliveryController.php" method="post">
+        <button class="green-button biggerbutton" type="submit" name="create_delivery_form">Create Delivery</button>
+    </form>
+    <?php endif ?>
+
+    <?php if (isset($_SESSION['deliveryform'])) :?>
+<!--    if the manager presses the create delivery button the delivery form will appear-->
+    <form action="createDeliveryController.php" method="post">
+<!--standard input fields-->
+        <label class="deliveryInput">
+            <input type="text" name="name" id="name" maxlength="29" placeholder="Enter Delivery Name..." required>
+        </label>
+        <label class="deliveryInput">
+            <input type="text" name="address_1" id="address_1" maxlength="45" placeholder="Enter Address Line 1..." required>
+        </label>
+        <label class="deliveryInput">
+            <input type="text" name="address_2" id="address_2" maxlength="45" placeholder="Enter Address Line 2..." required>
+        </label>
+        <label class="deliveryInput">
+            <input type="text" name="postcode" id="postcode" maxlength="7" placeholder="Enter Postcode..." required>
+        </label>
+<!--        standard input fields-->
+        <label class="deliveryInput">
+            <select name="deliverer" id="deliverer">
+<!--                dynamically populating the select box with the id and names of the deliverers, allows for the id of the deliverer to be passed directly to the controller later-->
+                <?php foreach ($view->deliveryUserDataSet as $DeliveryUser): ?>
+                    <option value="<?= htmlspecialchars($DeliveryUser->getUserId()) ?>">
+                        <?= htmlspecialchars($DeliveryUser->getUsername()) ?>
+                    </option>
+                <?php endforeach; ?>
+<!--                looping through all delivery users to ensure all options are available-->
+            </select>
+        </label>
+<!--        more basic input fields-->
+        <label class="deliveryInput">
+            <input type="number" step="any" name="lat" id="lat" placeholder="Enter Latitude..." required>
+        </label>
+        <label class="deliveryInput">
+            <input type="number" step="any" name="lng" id="lng" placeholder="Enter Longitude..." required>
+        </label>
+        <label class="deliveryInput">
+            <select name="status" id="status">
+                <option value="1">Label created</option>
+                <option value="2">Shipped</option>
+                <option value="3">Out for delivery</option>
+                <option value="4">Delivered</option>
+                <option value="5">Exception</option>
+            </select>
+        </label>
+
+        <label class="deliveryInput">
+            <input type="text" name="del_photo" maxlength="13" id="del_photo" placeholder="Enter Delivery Photo URL...">
+        </label>
+        <button class="green-button" type="submit" name="confirm_creation">Confirm</button>
+
+    </form>
+    <form action="createDeliveryController.php" method="post">
+        <button class="red-button" type="submit" name="cancel_creation">Cancel</button>
+    </form>
+<!--endif here is the end of the create  delivery form    -->
+    <?php endif?>
+<!--new conditional form for if the admin presses edit delivery, similar concept to previous form however input fields come already with the corresponding values in them-->
+    <?php if (isset($_SESSION['editform'])) :?>
+        <form action="editController.php" method="post">
+<!--values here are taken from the delivery point which the edit button was pressed on-->
+            <label class="deliveryInput">
+                <input type="text" name="name" id="name" maxlength="30" value="<?php echo htmlspecialchars($_SESSION['delivery_data']['name']); ?>" required>
+            </label>
+            <label class="deliveryInput">
+                <input type="text" name="address_1" id="address_1" maxlength="45" value="<?php echo htmlspecialchars($_SESSION['delivery_data']['address1']); ?>" required>
+            </label>
+            <label class="deliveryInput">
+                <input type="text" name="address_2" id="address_2" maxlength="45" value="<?php echo htmlspecialchars($_SESSION['delivery_data']['address2']); ?>" required>
+            </label>
+            <label class="deliveryInput">
+                <input type="text" name="postcode" id="postcode" maxlength="7" value="<?php echo htmlspecialchars($_SESSION['delivery_data']['postcode']); ?>" required>
+            </label>
+            <label class="deliveryInput">
+<!--                dynamically populating again-->
+                <select name="deliverer" id="deliverer">
+                    <?php foreach ($view->deliveryUserDataSet as $DeliveryUser): ?>
+                        <option value="<?= htmlspecialchars($DeliveryUser->getUserId()) ?>">
+                            <?= htmlspecialchars($DeliveryUser->getUsername()) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <label class="deliveryInput">
+                <input type="number" step="any" name="lat" id="lat" value="<?php echo htmlspecialchars($_SESSION['delivery_data']['lat']); ?>" required>
+            </label>
+            <label class="deliveryInput">
+                <input type="number" step="any" name="lng" id="lng" value="<?php echo htmlspecialchars($_SESSION['delivery_data']['lng']); ?>" required>
+            </label>
+            <label class="deliveryInput">
+                <select name="status" id="status">
+                    <option value="1">Label created</option>
+                    <option value="2">Shipped</option>
+                    <option value="3">Out for delivery</option>
+                    <option value="4">Delivered</option>
+                    <option value="5">Exception</option>
+                </select>
+            </label>
+
+            <label class="deliveryInput">
+                <input type="text" name="del_photo" id="del_photo" maxlength="13" value="<?php echo htmlspecialchars($_SESSION['delivery_data']['del_photo']); ?>">
+            </label>
+<!--            value of the button here set to the id of the delivery point to send it to the controller-->
+            <button class="green-button" type="submit" name="confirm_edit" value="<?php echo ($_SESSION['delivery_data']['id']); ?>">Confirm</button>
+        </form>
+        <form action="editController.php" method="post">
+            <button class="red-button" type="submit" name="cancel_edit">Cancel</button>
+        </form>
+<!--end of edit form-->
+    <?php endif?>
+<?php else: ?>
+<!--if a user hasnt logged in yet they will see this-->
+    <p>Please log into ParcelPal to access deliveries.</p>
+<?php endif ?>
+<?php if (isset($userData)) :?>
+<form action="index.php" method="POST" class="selector">
+        <label class="OrderingSelector">
+            Order results by:
+            <?php if($userData['user_type_name'] === 'Manager') :?>
+            <select name="orderer" id="orderer">
+                <option value="0"> </option>
+                <option value="1">ID</option>
+                <option value="2">Deliverer</option>
+                <option value="3">Status</option>
+            </select>
+            <?php else :?>
+            <select name="orderer" id="orderer">
+                <option value="0"> </option>
+                <option value="1">ID</option>
+                <option value="2">Status</option>
+            </select>
+            <?php endif?>
+            <button class="green-button" type="submit" name="orderingButton">Submit</button>
+        </label>
+</form>
+<?php endif?>
+<!--<form method="post">-->
+    <div class="delivery-points">
+        <?php if (isset($view->deliveryPointDataSet)) : ?>
+<!--        if the delivery point data set has been connected, loop through each point and populate divs with corresponding information eg id-->
+            <?php foreach ($view->deliveryPointDataSet as $deliveryPoint): ?>
+                <div class="delivery-point">
+                    <div>ID: <?php echo htmlspecialchars($deliveryPoint->getId()); ?></div>
+                    <div>Name: <?php echo htmlspecialchars($deliveryPoint->getName()); ?></div>
+                    <div>Address 1: <?php echo htmlspecialchars($deliveryPoint->getAddress1()); ?></div>
+                    <div>Address 2: <?php echo htmlspecialchars($deliveryPoint->getAddress2()); ?></div>
+                    <div>Postcode: <?php echo htmlspecialchars($deliveryPoint->getPostcode()); ?></div>
+                    <div>Deliverer: <?php echo htmlspecialchars($deliveryPoint->getUsername()); ?></div>
+                    <div>Latitude: <?php echo htmlspecialchars($deliveryPoint->getLat()); ?></div>
+                    <div>Longitude: <?php echo htmlspecialchars($deliveryPoint->getLng()); ?></div>
+                    <div>Status: <?php echo htmlspecialchars($deliveryPoint->getStatusText()); ?></div>
+                    <div>Photo: <?php echo htmlspecialchars($deliveryPoint->getDelPhoto()); ?></div>
+                    <?php if ($view->userTypeName === 'Manager') : ?>
+                        <div class="controlbuttons">
+                            <form action="editController.php" method="post">
+<!--                                value here given as the points id to send to controller to allow for the correct point to be editied-->
+                                <button class="green-button" type="submit" name="edit" value="<?php echo $deliveryPoint->getId(); ?>">Edit Delivery</button>
+                            </form>
+<!--                            delete button has id value too to send it to controller and make sure correct point is deleted-->
+                            <form action="deleteController.php" method="post">
+                                <button class="red-button biggerbutton margined" type="submit" name="delete" value="<?php echo $deliveryPoint->getId(); ?>">Delete Delivery</button>
+                            </form>
+                        </div>
+                    <?php endif ?>
+                </div>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <div class="delivery-point">No delivery points available.</div>
+        <?php endif; ?>
+
+    </div>
+
+</div>
+<?php 
+<?php require('Templates/footer.phtml'); ?>

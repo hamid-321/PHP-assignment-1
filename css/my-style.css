@@ -1,0 +1,119 @@
+#title {
+    margin-top: 12px;
+    background-color: #fff;
+    color: #000;
+
+}
+#menu {
+    border-top: solid 6px #f00;
+    background-color: #f00;
+    color: #fff;
+    /*height: 400px;*/
+}
+
+#menu a {
+    background-color: #f00;
+    color: #fff;
+    text-decoration: none;
+    display: block;
+}
+#menu a:hover {
+    background-color: #f00;
+    color: #ddd;
+    text-decoration:underline;
+    display: block;
+}
+
+#content {
+    background-color: #fff;
+    border-top: solid 6px #f00;
+
+}
+
+#footer {
+    margin-top: 20px;
+    text-align: center;
+    background-color: #000;
+    color: #fff;
+}
+
+.allcontent {
+    margin-left: 1.5vw;
+    margin-right: 1.5vw;
+}
+.navbar {
+    background-color: cyan;
+    width: 100%;
+}
+.navbar-brand {
+    margin-left: 5px;
+}
+.error {
+    color: red;
+}
+button{
+    max-width: 100px;
+    padding: 0;
+
+}
+.green-button {
+    border: 2px solid green; /* Green outline */
+    color: black; /* Text color */
+    background-color: transparent; /* Transparent background */
+    border-radius: 5px; /* Slightly rounded corners */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
+    padding: 6px 4px;
+    text-decoration: none; /* Removes underline from links if used on 'a' elements */
+    cursor: pointer; /* Changes the cursor to a pointer */
+}
+
+.green-button:hover {
+    background-color: green; /* Green background on hover */
+    color: white; /* White text on hover */
+    border: 2px solid black;
+}
+
+.red-button {
+    border: 2px solid red; /* Red outline */
+    color: black; /* Text color initially black */
+    background-color: transparent; /* Transparent background initially */
+    border-radius: 5px; /* Slightly rounded corners */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
+    padding: 6px 4px; /* Some padding around the text */
+    text-decoration: none; /* Removes underline from links if used on 'a' elements */
+    cursor: pointer; /* Changes the cursor to a pointer */
+}
+
+.red-button:hover {
+    background-color: red; /* Red background on hover */
+    color: white; /* Text color changes to white on hover */
+    border: 2px solid black;
+}
+.biggerbutton {
+    max-width: 125px;
+}
+.controlbuttons {
+    display: flex;
+}
+
+.margined {
+    margin-left: 3px;
+}
+.delivery-point{
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 5px 5px 5px 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+.selector{
+    display: flex;
+    justify-content: right;
+    align-items: center;
+}
+.OrderingSelector {
+    right: 0;
+}
+.bottompad {
+    margin-bottom: 5px;
+}

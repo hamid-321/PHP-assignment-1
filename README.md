@@ -2,8 +2,6 @@ Individual php assignment to represent a delivery system for admins and delivery
 
 First attempt at using php
 
-To run the project, download all flies and set up a php webserver in php storm.
-
 Once again the project has been hosted on a live server to allow easy access for viewing: 
 
 http://sgc488.poseidon.salford.ac.uk/clientserver/
